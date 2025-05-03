@@ -11,4 +11,4 @@ ENV PORT=3333
 
 EXPOSE 3333
 
-CMD ["node", "src/server.js"]
+CMD ["sh", "-c", "node src/server.js"]
