@@ -3,11 +3,12 @@ FROM node:22
 WORKDIR /app
 
 COPY package*.json ./
+
 RUN npm install
 
-RUN npx prisma generate
-
 COPY . .
+
+RUN npx prisma generate
 
 ENV PORT=3333
 
