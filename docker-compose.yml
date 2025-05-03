@@ -11,7 +11,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
     volumes:
       - .:/app
-    command: npm run dev
+      - /app/node_modules
     working_dir: /app
 
   pgadmin:
@@ -24,9 +24,8 @@ services:
     ports:
       - "5050:80"
     volumes:
-    - pgadmin_data:/var/lib/pgadmin
-
+      - pgadmin_data:/var/lib/pgadmin
 
 volumes:
   postgres_data:
-  pgadmin_data:  
+  pgadmin_data:
