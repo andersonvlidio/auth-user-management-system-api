@@ -6,8 +6,6 @@ const { authorizeAdmin } = require('../middlewares/authorizeAdmin');
 
 router.post('/login', login);
 
-router.get('/me', authenticateToken, getProfile);
-
 router.get('/profile/:id', authenticateToken, authorizeAdmin, getProfile);
 
 

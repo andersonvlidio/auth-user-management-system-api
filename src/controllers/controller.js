@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { isValidEmail, isValidBirthDate, isValidCPF, isValidRole } = require('../utils/validationsUtils');
 
 
 const prisma = new PrismaClient();
@@ -8,8 +9,20 @@ const prisma = new PrismaClient();
 const createUser = async (req, res) => {
   const { name, cpf, email, birthDate, password, role } = req.body;
 
+  if (isValidEmail(email) === false) {
+    return res.status(400).json({ error: 'Email inválido' });
+  }
+  if (isValidBirthDate(birthDate) === false) {
+    return res.status(400).json({ error: 'Data de nascimento inválida, você ser precisa ser maior de idade para entrar no sistema!' });
+  }
+  if (isValidCPF(cpf) === false) {
+    return res.status(400).json({ error: 'CPF inválido' });
+  }
+  if (isValidRole(role) === false) {
+    return res.status(400).json({ error: 'Nível de acesso inválido' });
+  }
+
   try {
-    console.log('Received data:', req.body);
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
@@ -27,7 +40,7 @@ const createUser = async (req, res) => {
     res.status(201).json(user);
   } catch (error) {
     console.error('Erro ao criar usuário:', error);
-    res.status(500).json({ error: 'Erro ao criar o usuário' });
+    res.status(500).json({ error: `Erro ao criar o usuário ${error.message}` });
   }
 };
 
@@ -41,7 +54,6 @@ const getUsers = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  console.log('Login request received:', req.body);
   const { email, password } = req.body;
 
   try {
@@ -60,7 +72,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET || 'chave_jwt',
-      { expiresIn: '5h' }
+      { expiresIn: '1h' }
     );
 
     const { password: _, cpf, ...userData } = user;
@@ -103,6 +115,16 @@ const updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, email, birthDate, cpf } = req.body;
 
+  if (isValidEmail(email) === false) {
+    return res.status(400).json({ error: 'Email inválido' });
+  }
+  if (isValidBirthDate(birthDate) === false) {
+    return res.status(400).json({ error: 'Data de nascimento inválida, você ser precisa ser maior de idade para entrar no sistema!' });
+  }
+  if (isValidCPF(cpf) === false) {
+    return res.status(400).json({ error: 'CPF inválido' });
+  }
+
   try {
     const updatedUser = await prisma.user.update({
       where: { id },
@@ -119,6 +141,12 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { id } = req.params;
+
+  const user = await prisma.user.findUnique({ where: { id } });
+
+  if (!user) {
+    return res.status(404).json({ error: 'Usuário não encontrado' });
+  }
 
   try {
     await prisma.user.delete({ where: { id } });
