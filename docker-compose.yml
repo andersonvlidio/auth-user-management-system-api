@@ -7,12 +7,26 @@ services:
     ports:
       - "3333:3333"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/authuserdb
       - JWT_SECRET=${JWT_SECRET}
     volumes:
       - .:/app
-      - /app/node_modules
+    depends_on:
+      - db
     working_dir: /app
+
+  db:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: authuserdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4

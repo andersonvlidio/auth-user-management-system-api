@@ -1,12 +1,9 @@
-#!/bin/bash
+#!/bin/sh
+set -ex
 
-set -e
-
-echo "📦 Gerando Prisma Client..."
 npx prisma generate
 
-echo "🧩 Aplicando migrações com Prisma..."
 npx prisma migrate deploy
 
-echo "🚀 Iniciando aplicação..."
+echo "Iniciando aplicação..."
 exec node src/server.js
