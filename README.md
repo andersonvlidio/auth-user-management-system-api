@@ -26,6 +26,9 @@ O backend está em produção com deploy automático na [Render](https://render.
 
 🔗 **API de Produção:** [https://auth-user-management-system-api.onrender.com](https://auth-user-management-system-api.onrender.com)
 
+o banco de dados também está em produção no [Render](https://render.com/).
+
+
 ## 📦 Instalação
 
 ### 1. Clonar o repositório
