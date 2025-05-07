@@ -7,7 +7,13 @@ const cors = require('cors');
 
 app.use(express.json());
 
-const allowedOrigins = ['https://auth-user-management-system.vercel.app', 'http://localhost:5173'];
+const allowedOrigins = [
+  'https://auth-user-management-system.vercel.app',
+  'https://auth-user-management-system-andersonvlidios-projects.vercel.app',
+  'https://auth-user-management-system-5b8pwtc68-andersonvlidios-projects.vercel.app',
+  'https://auth-user-management-system-git-master-andersonvlidios-projects.vercel.app',
+  'http://localhost:5173'
+];
 
 app.use(cors({
   origin: (origin, callback) => {
