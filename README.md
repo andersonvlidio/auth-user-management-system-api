@@ -68,7 +68,7 @@ Todas as rotas estão baseadas na URL `/api`.
 
 | Método | Rota             | Descrição                                      | Acesso                  |
 |--------|------------------|-----------------------------------------------|-------------------------|
-| POST   | `/api/login`      | Autenticação e geração de token JWT          | Público                 |
+| POST   | `/api/auth/login`      | Autenticação e geração de token JWT          | Público                 |
 | GET    | `/api/users`     | Listagem de usuários                          | ADMIN e VISUALIZADOR    |            |
 | POST   | `/api/users`     | Criação de usuário                            | ADMIN                   |
 | PUT    | `/api/auth/users/:id` | Atualização de dados de um usuário            | ADMIN ou o próprio usuário |
