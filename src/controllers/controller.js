@@ -113,22 +113,48 @@ const getProfile = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, email, birthDate, cpf } = req.body;
+  const { name, email, birthDate, cpf, oldPassword, newPassword } = req.body;
 
   if (isValidEmail(email) === false) {
     return res.status(400).json({ error: 'Email inválido' });
   }
   if (isValidBirthDate(birthDate) === false) {
-    return res.status(400).json({ error: 'Data de nascimento inválida, você ser precisa ser maior de idade para entrar no sistema!' });
+    return res.status(400).json({
+      error: 'Data de nascimento inválida, você precisa ser maior de idade para entrar no sistema!',
+    });
   }
   if (isValidCPF(cpf) === false) {
     return res.status(400).json({ error: 'CPF inválido' });
   }
 
   try {
+    
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    let passwordUpdate = {};
+
+    if (oldPassword && newPassword) {
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: 'Senha atual incorreta.' });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      passwordUpdate.password = hashedPassword;
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: { name, email, birthDate: new Date(birthDate), cpf },
+      data: {
+        name,
+        email,
+        birthDate: new Date(birthDate),
+        cpf,
+        ...passwordUpdate,
+      },
     });
 
     const { password, ...userSafe } = updatedUser;
@@ -138,6 +164,7 @@ const updateUser = async (req, res) => {
     res.status(500).json({ error: 'Erro ao atualizar o usuário.' });
   }
 };
+
 
 const deleteUser = async (req, res) => {
   const { id } = req.params;
